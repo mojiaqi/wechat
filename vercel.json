@@ -7,10 +7,16 @@
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/template-variable", "dest": "/template-variable.html" },
+    { "src": "/activity-template", "dest": "/activity-template.html" },
+    { "src": "/template-management", "dest": "/template-management.html" },
+    { "src": "/template-list", "dest": "/template-list.html" },
+    { "src": "/wechat-integration", "dest": "/wechat-integration.html" },
+    { "src": "/mp-auth", "dest": "/mp-auth.html" },
+    { "src": "/template-config", "dest": "/template-config.html" },
+    { "src": "/message-records", "dest": "/message-records.html" },
+    { "src": "/(.*)", "dest": "/$1" }
   ],
   "outputDirectory": "."
 }
