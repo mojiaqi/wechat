@@ -1,0 +1,16 @@
+{
+  "name": "wechat-template-message",
+  "version": "1.0.0",
+  "description": "微信模板消息管理系统",
+  "scripts": {
+    "dev": "serve .",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
