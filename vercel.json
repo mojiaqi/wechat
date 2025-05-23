@@ -1,10 +1,29 @@
 {
-    "rewrites": [
-      { "source": "/", "destination": "/微信集成入口页.html" },
-      { "source": "/template-config", "destination": "/模板变量配置页.html" },
-      { "source": "/template-list", "destination": "/模板消息列表页.html" },
-      { "source": "/template-manage", "destination": "/模板消息管理页.html" },
-      { "source": "/message-records", "destination": "/消息发送记录页.html" },
-      { "source": "/auth", "destination": "/公众号授权页.html" }
+    "name": "wechat-template-message",
+    "version": "1.0.0",
+    "description": "微信模板消息管理系统",
+    "scripts": {
+      "dev": "serve .",
+      "build": "mkdir -p public && cp -r *.html public/ && echo 'Build completed'"
+    },
+    "dependencies": {
+      "serve": "^14.2.1"
+    },
+    "devDependencies": {},
+    "engines": {
+      "node": ">=14.0.0"
+    },
+    "version": 2,
+    "builds": [
+      {
+        "src": "*.html",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
+      }
     ]
   }
