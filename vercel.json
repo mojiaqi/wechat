@@ -1,1 +1,10 @@
- 
+{
+    "rewrites": [
+      { "source": "/", "destination": "/微信集成入口页.html" },
+      { "source": "/template-config", "destination": "/模板变量配置页.html" },
+      { "source": "/template-list", "destination": "/模板消息列表页.html" },
+      { "source": "/template-manage", "destination": "/模板消息管理页.html" },
+      { "source": "/message-records", "destination": "/消息发送记录页.html" },
+      { "source": "/auth", "destination": "/公众号授权页.html" }
+    ]
+  }
