@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板消息管理 - 会议管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .back-button {
+            background: none;
+            border: none;
+            color: #606266;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .back-button span {
+            margin-right: 5px;
+        }
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-box {
+            width: 300px;
+            padding: 8px 15px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .action-buttons button {
+            background-color: #07C160;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .table-container {
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: #f5f7fa;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ebeef5;
+        }
+        th {
+            font-weight: 500;
+            color: #606266;
+            font-size: 14px;
+        }
+        td {
+            font-size: 14px;
+            color: #606266;
+        }
+        .template-title {
+            font-weight: bold;
+            color: #303133;
+            margin-bottom: 5px;
+        }
+        .template-content {
+            color: #909399;
+            font-size: 12px;
+        }
+        .status-active {
+            color: #07C160;
+        }
+        .status-inactive {
+            color: #909399;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #f0f9eb;
+            color: #07C160;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-left: 5px;
+        }
+        .config-button {
+            background-color: #07C160;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .delete-button {
+            background-color: #f56c6c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .checkbox {
+            width: 18px;
+            height: 18px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            background-color: white;
+            margin: 0 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination button.active {
+            background-color: #07C160;
+            color: white;
+            border-color: #07C160;
+        }
+        .guide-section {
+            background-color: #f0f9eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #07C160;
+        }
+        .guide-title {
+            font-size: 16px;
+            color: #303133;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .guide-title i {
+            margin-right: 5px;
+        }
+        .guide-content {
+            font-size: 14px;
+            color: #606266;
+            line-height: 1.6;
+        }
+        .highlight-tip {
+            background-color: #fdf6ec;
+            border: 1px dashed #e6a23c;
+            color: #e6a23c;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="window.location.href='微信集成入口页.html'">
+                <span>←</span> 返回微信集成
+            </button>
+            <h1>模板消息管理</h1>
+        </div>
+
+        <div class="guide-section">
+            <div class="guide-title">
+                <i>💡</i> 模板消息使用指南
+            </div>
+            <div class="guide-content">
+                模板消息是微信公众号向已关注的用户主动推送消息的功能。通过配置模板，您可以在用户进行会议签到或酒店入住后自动向其发送提醒通知。
+                <div class="highlight-tip">
+                    <b>👉 操作提示：</b> 点击每个模板行右侧的<b>「配置」</b>绿色按钮，进入模板变量配置页面
+                </div>
+            </div>
+        </div>
+
+        <div class="search-filter">
+            <input type="text" class="search-box" placeholder="搜索模板标题或ID">
+            <div class="action-buttons">
+                <button onclick="alert('正在从微信公众平台同步模板，请稍候...')">同步模板</button>
+                <button onclick="alert('跳转到微信公众平台添加模板页面...')">添加模板</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="5%"><input type="checkbox" class="checkbox"></th>
+                        <th width="10%">模板ID</th>
+                        <th width="45%">模板内容</th>
+                        <th width="15%">添加时间</th>
+                        <th width="10%">状态</th>
+                        <th width="15%">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>TM00001</td>
+                        <td>
+                            <div class="template-title">会议签到通知 <span class="tag">推荐</span></div>
+                            <div class="template-content">{{first.DATA}} 会议名称：{{keyword1.DATA}} 签到时间：{{keyword2.DATA}} 签到地点：{{keyword3.DATA}} {{remark.DATA}}</div>
+                        </td>
+                        <td>2023-11-10</td>
+                        <td class="status-active">已配置</td>
+                        <td>
+                            <a href="模板变量配置页.html"><button class="config-button">配置</button></a>
+                            <button class="delete-button">删除</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>TM00002</td>
+                        <td>
+                            <div class="template-title">酒店入住通知 <span class="tag">推荐</span></div>
+                            <div class="template-content">{{first.DATA}} 酒店名称：{{keyword1.DATA}} 房间号：{{keyword2.DATA}} 入住时间：{{keyword3.DATA}} {{remark.DATA}}</div>
+                        </td>
+                        <td>2023-11-12</td>
+                        <td class="status-active">已配置</td>
+                        <td>
+                            <a href="模板变量配置页.html"><button class="config-button">配置</button></a>
+                            <button class="delete-button">删除</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>TM00003</td>
+                        <td>
+                            <div class="template-title">会议提醒</div>
+                            <div class="template-content">{{first.DATA}} 会议主题：{{keyword1.DATA}} 会议时间：{{keyword2.DATA}} 会议地点：{{keyword3.DATA}} {{remark.DATA}}</div>
+                        </td>
+                        <td>2023-11-15</td>
+                        <td class="status-inactive">未配置</td>
+                        <td>
+                            <a href="模板变量配置页.html"><button class="config-button">配置</button></a>
+                            <button class="delete-button">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button>«</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>»</button>
+        </div>
+    </div>
+</body>
+</html>

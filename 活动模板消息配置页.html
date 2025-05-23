@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>活动模板消息配置</title>
+  <style>
+    body { background: #f5f7fa; color: #333; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06); padding: 24px 24px 40px 24px; }
+    .header { display: flex; align-items: center; margin-bottom: 18px; }
+    .back-link { color: #337ecc; text-decoration: none; font-size: 15px; margin-right: 18px; }
+    .activity-info { background: #f7f8fa; border-radius: 8px; padding: 18px 22px; margin-bottom: 24px; }
+    .activity-title { font-size: 18px; font-weight: bold; margin-bottom: 6px; }
+    .activity-meta { color: #909399; font-size: 14px; }
+    .template-list { margin-bottom: 28px; }
+    .template-list-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+    .template-item { background: #f8fafd; border: 1px solid #ebeef5; border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .template-info { display: flex; flex-direction: column; }
+    .template-name { font-size: 15px; font-weight: 500; color: #337ecc; }
+    .template-id { font-size: 13px; color: #909399; }
+    .template-actions { display: flex; gap: 10px; }
+    .add-template-btn { background: #409eff; color: #fff; border: none; border-radius: 4px; padding: 6px 18px; font-size: 14px; cursor: pointer; }
+    .remove-template-btn { background: #f56c6c; color: #fff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+    .config-area { margin-top: 32px; }
+    .config-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; }
+    .config-card { background: #f8fafd; border-radius: 8px; padding: 22px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部返回入口 -->
+    <div class="header">
+      <a href="#" class="back-link">← 返回活动列表</a>
+      <span style="font-size:17px;font-weight:bold;">活动模板消息配置</span>
+    </div>
+    <!-- 活动信息区 -->
+    <div class="activity-info">
+      <div class="activity-title">2024年春季技术大会</div>
+      <div class="activity-meta">时间：2024-04-18 09:00 ~ 2024-04-20 17:00　|　地点：上海国际会议中心</div>
+    </div>
+    <!-- 已关联模板列表 -->
+    <div class="template-list">
+      <div class="template-list-title">已关联模板</div>
+      <!-- 示例模板项，可动态渲染 -->
+      <div class="template-item">
+        <div class="template-info">
+          <span class="template-name">会议签到通知</span>
+          <span class="template-id">ID: TM0001</span>
+        </div>
+        <div class="template-actions">
+          <button class="remove-template-btn">移除</button>
+        </div>
+      </div>
+      <div class="template-item">
+        <div class="template-info">
+          <span class="template-name">酒店入住提醒</span>
+          <span class="template-id">ID: TM0002</span>
+        </div>
+        <div class="template-actions">
+          <button class="remove-template-btn">移除</button>
+        </div>
+      </div>
+      <button class="add-template-btn" id="addTemplateBtn">+ 添加模板</button>
+    </div>
+    <!-- 针对每个已关联模板的配置区（可复用分步UI结构） -->
+    <div class="config-area">
+      <div class="config-title">模板配置 - 会议签到通知</div>
+      <div class="config-card">
+        <!-- 这里可嵌入变量映射、触发条件、测试发送等分步UI，建议复用原有配置页结构 -->
+        <p style="color:#909399;">（此处为模板变量映射、触发条件、测试发送等配置区，可复用原有分步UI）</p>
+      </div>
+      <div class="config-title">模板配置 - 酒店入住提醒</div>
+      <div class="config-card">
+        <p style="color:#909399;">（此处为模板变量映射、触发条件、测试发送等配置区，可复用原有分步UI）</p>
+      </div>
+    </div>
+  </div>
+  <!-- 添加模板弹窗 -->
+  <div id="addTemplateModal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.25);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:10px;min-width:340px;max-width:90vw;padding:28px 32px;box-shadow:0 4px 24px rgba(0,0,0,0.13);">
+      <div style="font-size:17px;font-weight:bold;margin-bottom:18px;">选择要添加的模板</div>
+      <div style="margin-bottom:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0;">
+          <div>
+            <div style="font-size:15px;font-weight:500;">会议签到通知</div>
+            <div style="font-size:13px;color:#909399;">ID: TM0001</div>
+          </div>
+          <button class="select-template-btn" data-name="会议签到通知" data-id="TM0001" style="background:#409eff;color:#fff;border:none;border-radius:4px;padding:5px 16px;font-size:13px;cursor:pointer;">选择</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;">
+          <div>
+            <div style="font-size:15px;font-weight:500;">酒店入住提醒</div>
+            <div style="font-size:13px;color:#909399;">ID: TM0002</div>
+          </div>
+          <button class="select-template-btn" data-name="酒店入住提醒" data-id="TM0002" style="background:#409eff;color:#fff;border:none;border-radius:4px;padding:5px 16px;font-size:13px;cursor:pointer;">选择</button>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <button onclick="closeAddTemplateModal()" style="background:#f0f0f0;color:#666;border:none;border-radius:4px;padding:5px 18px;font-size:13px;cursor:pointer;">取消</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 打开弹窗
+    document.getElementById('addTemplateBtn').onclick = function() {
+      document.getElementById('addTemplateModal').style.display = 'flex';
+    };
+    // 关闭弹窗
+    function closeAddTemplateModal() {
+      document.getElementById('addTemplateModal').style.display = 'none';
+    }
+    // 选择模板
+    document.querySelectorAll('.select-template-btn').forEach(function(btn){
+      btn.onclick = function() {
+        alert('已添加模板：' + btn.dataset.name + '（' + btn.dataset.id + '）');
+        closeAddTemplateModal();
+        // 实际开发中应将模板插入到已关联模板列表
+      }
+    });
+  </script>
+</body>
+</html> 

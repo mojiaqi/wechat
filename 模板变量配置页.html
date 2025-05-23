@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板变量配置 - 会议管理系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+        body { background-color: #f5f7fa; color: #333; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 24px 24px 40px 24px; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06); }
+        .stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+        .step { display: flex; align-items: center; font-size: 15px; color: #909399; }
+        .step.active { color: #07C160; font-weight: bold; }
+        .step-circle { width: 28px; height: 28px; border-radius: 50%; background: #e4f7ea; color: #07C160; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-weight: bold; }
+        .step.active .step-circle { background: #07C160; color: #fff; }
+        .step-line { width: 60px; height: 2px; background: #e4f7ea; margin: 0 12px; }
+        .step.active + .step-line { background: #07C160; }
+        .main-content { display: flex; gap: 32px; }
+        .form-area { flex: 1.2; }
+        .preview-area { flex: 1; background: #f5f7fa; border-radius: 8px; padding: 20px; min-width: 320px; }
+        .preview-title { font-size: 15px; color: #333; margin-bottom: 10px; font-weight: bold; }
+        .wechat-preview { width: 100%; max-width: 320px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; margin: 0 auto; }
+        .wechat-header { background: #07C160; color: #fff; padding: 10px 15px; font-size: 15px; }
+        .wechat-body { padding: 15px; }
+        .wechat-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; }
+        .wechat-content { font-size: 14px; line-height: 1.6; }
+        .wechat-field { margin-bottom: 8px; }
+        .wechat-field-label { color: #909399; font-size: 12px; }
+        .wechat-field-value { color: #333; }
+        .wechat-remark { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ebeef5; font-size: 12px; color: #909399; }
+        .wechat-footer { background: #f9f9f9; padding: 10px 15px; text-align: right; font-size: 12px; color: #07C160; }
+        .form-title { font-size: 17px; font-weight: bold; margin-bottom: 18px; color: #333; }
+        .form-description { font-size: 14px; color: #606266; margin-bottom: 18px; line-height: 1.6; }
+        .variable-table { width: 100%; border-collapse: collapse; border: 1px solid #ebeef5; margin-bottom: 20px; }
+        .variable-table th, .variable-table td { border: 1px solid #ebeef5; padding: 12px 15px; text-align: left; }
+        .variable-table th { background: #f5f7fa; color: #606266; font-weight: normal; font-size: 14px; }
+        .variable-table td { font-size: 14px; vertical-align: middle; }
+        .variable-name { color: #409eff; font-weight: bold; }
+        .field-selector {
+            display: block;
+        }
+        .field-selector select {
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            line-height: 32px;
+        }
+        .field-selector input {
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            font-size: 14px;
+            height: 32px;
+            width: 100%;
+            margin-bottom: 0;
+            box-sizing: border-box;
+        }
+        .field-selector .variable-field-inline {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            gap: 6px;
+            width: 100%;
+        }
+        .field-selector .variable-field-inline span {
+            line-height: 32px;
+            font-size: 14px;
+        }
+        .field-selector .variable-field-inline .step-btn.secondary {
+            height: 32px;
+            padding: 0 12px;
+            font-size: 14px;
+            line-height: 32px;
+            border-radius: 4px;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: #606266; }
+        .form-group select, .form-group input { width: 100%; padding: 8px 10px; border-radius: 4px; border: 1px solid #dcdfe6; font-size: 14px; }
+        .step-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+        .step-btn { background: #07C160; color: #fff; border: none; padding: 8px 24px; border-radius: 4px; font-size: 15px; cursor: pointer; }
+        .step-btn[disabled] { background: #e4f7ea; color: #b2b2b2; cursor: not-allowed; }
+        .step-btn.secondary { background: #f4f4f5; color: #606266; }
+        .tip { color: #909399; font-size: 13px; margin-bottom: 10px; }
+        .variable-field-panel {
+            display: contents;
+        }
+        .variable-field-group { margin-bottom:18px; }
+        .variable-field-group-title { font-weight:bold; color:#337ecc; margin-bottom:8px; font-size:15px; }
+        .variable-field-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 12px;
+            margin-bottom: 0;
+            justify-content: flex-start;
+        }
+        .variable-field-btn {
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 7px 0;
+            width: 90px;
+            font-size: 14px;
+            color: #606266;
+            cursor: pointer;
+            font-weight: 400;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .variable-field-btn.selected, .variable-field-btn:active {
+            background: #337ecc;
+            color: #fff;
+            border-color: #337ecc;
+            font-weight: 500;
+        }
+        .variable-field-btn:disabled {
+            background: #f4f4f5;
+            color: #bfbfbf;
+            border-color: #ebeef5;
+            cursor: not-allowed;
+        }
+        .variable-field-group-toggle { background:none; border:none; color:#337ecc; font-size:14px; cursor:pointer; margin-top:6px; }
+        .variable-field-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: flex-start;
+        }
+        .variable-field-tab {
+            flex: none;
+            min-width: 72px;
+            background: #fff;
+            border: 1px solid #d0d7de;
+            color: #337ecc;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: none;
+            outline: none;
+        }
+        .variable-field-tab.active {
+            background: #eaf3fb;
+            color: #337ecc;
+            border-bottom: 2px solid #337ecc;
+            font-weight: bold;
+        }
+        .variable-field-tab:not(.active):hover {
+            background: #f4f8fb;
+        }
+        .variable-field-tab + .variable-field-tab { margin-left: -1px; }
+        /* 弹窗样式优化 */
+        .variable-modal-mask {
+            position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.25); z-index: 1001; display: flex; align-items: center; justify-content: center;
+        }
+        .variable-modal {
+            background: #fff; border-radius: 10px; width: 400px; max-width: 96vw; padding: 28px 28px 20px 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            position: relative;
+        }
+        .variable-modal-title { font-size: 17px; font-weight: bold; margin-bottom: 18px; color: #333; }
+        .variable-modal-close { position: absolute; right: 18px; top: 16px; font-size: 20px; color: #909399; background: none; border: none; cursor: pointer; }
+        .variable-modal-tabs {
+            display: flex; gap: 0; margin-bottom: 0; border-bottom: 1.5px solid #e4e7ed; background: #f7fafd;
+        }
+        .variable-modal-tab {
+            flex: 1; background: none; border: none; color: #337ecc; font-size: 15px; font-weight: 500; padding: 12px 0 10px 0; border-radius: 0; cursor: pointer; transition: all 0.2s; text-align: center; outline: none; border-bottom: 2.5px solid transparent;
+        }
+        .variable-modal-tab.active {
+            background: #fff; color: #337ecc; font-weight: bold; border-bottom: 2.5px solid #337ecc;
+        }
+        .variable-modal-tab:not(.active):hover { background: #f0faff; }
+        .variable-modal-btns {
+            display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 22px; margin-bottom: 0; justify-content: flex-start;
+        }
+        .variable-modal-btn {
+            background: #fff; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 0; width: 104px; font-size: 14px; color: #606266; cursor: pointer; font-weight: 400; transition: all 0.2s; text-align: center;
+        }
+        .variable-modal-btn.selected, .variable-modal-btn:active {
+            background: #337ecc; color: #fff; border-color: #337ecc; font-weight: 500;
+        }
+        .variable-field-inline {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            gap: 6px;
+        }
+        .variable-field-inline span {
+            line-height: 32px;
+            font-size: 14px;
+        }
+        .variable-field-inline .step-btn.secondary {
+            height: 32px;
+            padding: 0 12px;
+            font-size: 14px;
+            line-height: 32px;
+            border-radius: 4px;
+        }
+        .card-radio-group {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 16px;
+        }
+        .card-radio {
+            flex: 1;
+            background: #f7f8fa;
+            border: 1.5px solid #dcdfe6;
+            border-radius: 8px;
+            padding: 16px 0;
+            text-align: center;
+            font-size: 16px;
+            color: #337ecc;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: none;
+            position: relative;
+            user-select: none;
+        }
+        .card-radio.selected {
+            background: #fff;
+            border-color: #337ecc;
+            color: #337ecc;
+            box-shadow: 0 2px 8px rgba(51,126,204,0.08);
+            font-weight: bold;
+        }
+        .card-radio input[type="radio"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 步骤导航 -->
+        <div class="stepper">
+            <div class="step" id="step1Nav"><div class="step-circle">1</div>变量映射</div>
+            <div class="step-line"></div>
+            <div class="step" id="step2Nav"><div class="step-circle">2</div>触发条件</div>
+            <div class="step-line"></div>
+            <div class="step" id="step3Nav"><div class="step-circle">3</div>测试发送</div>
+        </div>
+        <div class="main-content">
+            <!-- 步骤内容区 -->
+            <div class="form-area">
+                <!-- 步骤一：变量映射 -->
+                <div class="step-content" id="step1">
+                    <div class="form-title">变量映射</div>
+                    <div class="form-description">为每个模板变量选择对应的系统字段或填写固定文本，系统会在发送消息时自动填充相应内容。</div>
+                    <table class="variable-table">
+                        <thead>
+                            <tr>
+                                <th width="20%">模板变量</th>
+                                <th width="25%">变量说明</th>
+                                <th width="55%">映射系统字段</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="variable-name">first</td>
+                                <td>首行文字（如问候语）</td>
+                                <td>
+                                    <div class="field-selector">
+                                        <select onchange="onMappingTypeChange(this, 'first')" id="firstMappingType">
+                                            <option value="fixed" selected>固定文本</option>
+                                            <option value="variable">变量字段</option>
+                                        </select>
+                                        <input type="text" id="firstFixedInput" placeholder="请输入固定文本" value="您好，您已成功签到！">
+                                        <div id="firstVariablePanel" class="variable-field-inline" style="display:none;">
+                                          <span id="firstVariableSelectedLabel" style="color:#337ecc;"></span>
+                                          <button type="button" class="step-btn secondary" onclick="showVariableModal('first')">选择变量</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="variable-name">keyword1</td>
+                                <td>会议名称</td>
+                                <td>
+                                    <div class="field-selector">
+                                        <select onchange="onMappingTypeChange(this, 'keyword1')" id="keyword1MappingType">
+                                            <option value="fixed">固定文本</option>
+                                            <option value="variable" selected>变量字段</option>
+                                        </select>
+                                        <input type="text" id="keyword1FixedInput" placeholder="请输入固定文本" style="display:none;">
+                                        <div id="keyword1VariablePanel" class="variable-field-inline" style="display:none;">
+                                          <span id="keyword1VariableSelectedLabel" style="color:#337ecc;"></span>
+                                          <button type="button" class="step-btn secondary" onclick="showVariableModal('keyword1')">选择变量</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="variable-name">keyword2</td>
+                                <td>签到时间</td>
+                                <td>
+                                    <div class="field-selector">
+                                        <select onchange="onMappingTypeChange(this, 'keyword2')" id="keyword2MappingType">
+                                            <option value="fixed">固定文本</option>
+                                            <option value="variable" selected>变量字段</option>
+                                        </select>
+                                        <input type="text" id="keyword2FixedInput" placeholder="请输入固定文本" style="display:none;">
+                                        <div id="keyword2VariablePanel" class="variable-field-inline" style="display:none;">
+                                          <span id="keyword2VariableSelectedLabel" style="color:#337ecc;"></span>
+                                          <button type="button" class="step-btn secondary" onclick="showVariableModal('keyword2')">选择变量</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="variable-name">keyword3</td>
+                                <td>签到地点</td>
+                                <td>
+                                    <div class="field-selector">
+                                        <select onchange="onMappingTypeChange(this, 'keyword3')" id="keyword3MappingType">
+                                            <option value="fixed">固定文本</option>
+                                            <option value="variable" selected>变量字段</option>
+                                        </select>
+                                        <input type="text" id="keyword3FixedInput" placeholder="请输入固定文本" style="display:none;">
+                                        <div id="keyword3VariablePanel" class="variable-field-inline" style="display:none;">
+                                          <span id="keyword3VariableSelectedLabel" style="color:#337ecc;"></span>
+                                          <button type="button" class="step-btn secondary" onclick="showVariableModal('keyword3')">选择变量</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="variable-name">remark</td>
+                                <td>尾部备注内容</td>
+                                <td>
+                                    <div class="field-selector">
+                                        <select onchange="onMappingTypeChange(this, 'remark')" id="remarkMappingType">
+                                            <option value="fixed" selected>固定文本</option>
+                                            <option value="variable">变量字段</option>
+                                        </select>
+                                        <input type="text" id="remarkFixedInput" placeholder="请输入固定文本" value="感谢您参加本次会议，祝您会议愉快！">
+                                        <div id="remarkVariablePanel" class="variable-field-inline" style="display:none;">
+                                          <span id="remarkVariableSelectedLabel" style="color:#337ecc;"></span>
+                                          <button type="button" class="step-btn secondary" onclick="showVariableModal('remark')">选择变量</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="tip">系统字段会自动填充用户/会议等信息，固定文本可自定义内容。</div>
+                    <div class="form-title" style="margin-top:28px;">跳转链接设置</div>
+                    <div class="form-description">
+                        设置用户点击消息后跳转的链接地址，可使用系统变量进行个性化设置，例如 <code>$meetingId</code>、<code>$userId</code> 等。
+                    </div>
+                    <div style="margin-bottom: 18px;">
+                        <input type="text" id="jumpUrl" style="width:100%;padding:10px;border-radius:4px;border:1px solid #dcdfe6;font-size:14px;"
+                            value="https://meeting.example.com/checkin?id=$meetingId&user=$userId"
+                            placeholder="请输入跳转链接" oninput="updatePreview()">
+                    </div>
+                    <div class="tip">用户点击消息卡片后将跳转到此链接。</div>
+                    <div class="step-actions">
+                        <button class="step-btn secondary" disabled>上一步</button>
+                        <button class="step-btn" onclick="goStep(2)">下一步</button>
+                    </div>
+                </div>
+                <!-- 步骤二：触发条件 -->
+                <div class="step-content" id="step2" style="display:none;">
+                    <div class="form-title">触发条件设置</div>
+                    <div class="form-description">设置模板消息的触发条件，可选择事件触发或定时任务，系统将在满足条件时自动发送消息。</div>
+                    <div class="form-group">
+                        <label>触发类型</label>
+                        <div class="card-radio-group">
+                            <div class="card-radio selected" id="cardRadioEvent" onclick="setTriggerTypeCard('event')">
+                                <input type="radio" name="triggerType" value="event" checked>事件触发
+                            </div>
+                            <div class="card-radio" id="cardRadioTimer" onclick="setTriggerTypeCard('timer')">
+                                <input type="radio" name="triggerType" value="timer">定时任务
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 事件触发表单 -->
+                    <div id="eventTriggerArea">
+                        <div class="tip">如设置为"会议签到完成"，则每当有用户签到时会自动推送消息。</div>
+                        <div class="form-group">
+                            <label>触发事件</label>
+                            <select>
+                                <option selected>会议签到完成</option>
+                                <option>会议签到开始</option>
+                                <option>会议即将开始</option>
+                                <option>酒店入住完成</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>延时发送</label>
+                            <select>
+                                <option selected>立即发送</option>
+                                <option>延迟5分钟</option>
+                                <option>延迟10分钟</option>
+                                <option>延迟30分钟</option>
+                                <option>延迟1小时</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>适用会议类型</label>
+                            <select>
+                                <option selected>所有会议</option>
+                                <option>VIP会议</option>
+                                <option>普通会议</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>是否启用</label>
+                            <select>
+                                <option selected>启用</option>
+                                <option>禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 定时任务表单 -->
+                    <div id="timerTriggerArea" style="display:none;">
+                        <div class="tip">定时任务适用于定期推送，如每天/每周/指定时间自动发送消息。</div>
+                        <div class="form-group">
+                            <label>推送频率</label>
+                            <select id="timerFrequency">
+                                <option value="once">仅一次</option>
+                                <option value="daily" selected>每天</option>
+                                <option value="weekly">每周</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>推送时间</label>
+                            <input type="time" id="timerTime" value="08:00">
+                        </div>
+                        <div class="form-group" id="timerWeekdayGroup" style="display:none;">
+                            <label>星期</label>
+                            <select id="timerWeekday">
+                                <option value="1">周一</option>
+                                <option value="2">周二</option>
+                                <option value="3">周三</option>
+                                <option value="4">周四</option>
+                                <option value="5">周五</option>
+                                <option value="6">周六</option>
+                                <option value="0">周日</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>适用会议类型</label>
+                            <select>
+                                <option selected>所有会议</option>
+                                <option>VIP会议</option>
+                                <option>普通会议</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>是否启用</label>
+                            <select>
+                                <option selected>启用</option>
+                                <option>禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="step-actions">
+                        <button class="step-btn secondary" onclick="goStep(1)">上一步</button>
+                        <button class="step-btn" onclick="goStep(3)">下一步</button>
+                    </div>
+                </div>
+                <!-- 步骤三：测试发送 -->
+                <div class="step-content" id="step3" style="display:none;">
+                    <div class="form-title">测试发送</div>
+                    <div class="form-description">填写以下信息，测试发送模板消息，检查配置是否正确。</div>
+                    <div class="tip">建议先用测试账号验证消息内容和变量填充效果。</div>
+                    <div class="form-group">
+                        <label>接收人OpenID</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="text" id="testOpenId" placeholder="请扫码获取OpenID" style="flex:1;">
+                            <button type="button" class="step-btn secondary" onclick="showScanModal()">扫码获取</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>测试会议名称</label>
+                        <input type="text" value="2023年度技术研讨会">
+                    </div>
+                    <div class="form-group">
+                        <label>测试签到时间</label>
+                        <input type="text" value="2023-11-20 09:30:45">
+                    </div>
+                    <div class="step-actions">
+                        <button class="step-btn secondary" onclick="goStep(2)">上一步</button>
+                        <button class="step-btn" onclick="alert('测试消息已发送！')">发送测试消息</button>
+                        <button class="step-btn" style="background:#409eff;" onclick="alert('配置已保存！')">保存</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 实时预览区 -->
+            <div class="preview-area">
+                <div style="margin-bottom:18px;">
+                    <div style="font-size:15px;font-weight:bold;color:#333;margin-bottom:6px;">原始模板内容（来自公众号）</div>
+                    <pre style="background:#f5f7fa;border-radius:6px;padding:14px 18px;font-size:14px;color:#606266;line-height:1.8;overflow-x:auto;">
+{{first.DATA}}
+会议名称：{{keyword1.DATA}}
+签到时间：{{keyword2.DATA}}
+签到地点：{{keyword3.DATA}}
+{{remark.DATA}}
+                    </pre>
+                </div>
+                <div class="preview-title">消息实时预览</div>
+                <div class="wechat-preview">
+                    <div class="wechat-header">会议签到通知</div>
+                    <div class="wechat-body">
+                        <div class="wechat-title" id="previewFirst">您好，您已成功签到！</div>
+                        <div class="wechat-content">
+                            <div class="wechat-field">
+                                <span class="wechat-field-label">会议名称：</span>
+                                <span class="wechat-field-value" id="previewKeyword1">2023年度技术研讨会</span>
+                            </div>
+                            <div class="wechat-field">
+                                <span class="wechat-field-label">签到时间：</span>
+                                <span class="wechat-field-value" id="previewKeyword2">2023-11-20 09:30:45</span>
+                            </div>
+                            <div class="wechat-field">
+                                <span class="wechat-field-label">签到地点：</span>
+                                <span class="wechat-field-value" id="previewKeyword3">科技园B栋3楼多功能厅</span>
+                            </div>
+                            <div class="wechat-remark" id="previewRemark">
+                                感谢您参加本次会议，祝您会议愉快！
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wechat-footer" id="previewFooter">
+                        详情 >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 扫码弹窗 -->
+    <div id="scanModal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:32px 40px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.15);text-align:center;position:relative;">
+            <div style="font-size:16px;font-weight:bold;margin-bottom:18px;">微信扫码获取OpenID</div>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://your-backend.com/wechat/scan_openid" alt="扫码" style="width:180px;height:180px;">
+            <div style="color:#909399;font-size:13px;margin-top:12px;">请用微信扫码，扫码后自动填充OpenID</div>
+            <button onclick="hideScanModal()" style="margin-top:18px;" class="step-btn secondary">关闭</button>
+        </div>
+    </div>
+    <!-- 变量字段弹窗（唯一） -->
+    <div id="variableModalMask" class="variable-modal-mask" style="display:none;">
+        <div class="variable-modal">
+            <div class="variable-modal-title">选择变量字段</div>
+            <button class="variable-modal-close" onclick="hideVariableModal()">×</button>
+            <div class="variable-modal-tabs">
+                <div class="variable-modal-tab active" id="modal-tab-attendee" onclick="switchVariableModalGroup('attendee')">参会信息</div>
+                <div class="variable-modal-tab" id="modal-tab-hotel" onclick="switchVariableModalGroup('hotel')">酒店信息</div>
+                <div class="variable-modal-tab" id="modal-tab-link" onclick="switchVariableModalGroup('link')">活动相关链接</div>
+                <div class="variable-modal-tab" id="modal-tab-activity" onclick="switchVariableModalGroup('activity')">活动信息</div>
+            </div>
+            <div class="variable-modal-btns" id="variableModalBtns">
+                <!-- 字段按钮由JS渲染 -->
+            </div>
+        </div>
+    </div>
+    <script>
+        // 步骤切换
+        function goStep(step) {
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('step' + i).style.display = (i === step) ? '' : 'none';
+                document.getElementById('step' + i + 'Nav').classList.toggle('active', i === step);
+            }
+        }
+        // 默认第一步
+        goStep(1);
+        // 变量映射输入联动预览
+        function onMappingTypeChange(select, key) {
+            var isFixed = select.value === 'fixed';
+            document.getElementById(key + 'FixedInput').style.display = isFixed ? '' : 'none';
+            var panel = document.getElementById(key + 'VariablePanel');
+            if(panel) panel.style.display = isFixed ? 'none' : '';
+            updatePreview();
+        }
+        // 变量字段按钮选择
+        var selectedVariableField = {};
+        // 字段分组及字段定义
+        const variableFieldGroups = {
+            attendee: {
+                label: '参会信息',
+                fields: [
+                    { key: 'user_name', label: '姓名' }, { key: 'email', label: '邮箱' }, { key: 'mobile', label: '手机号' },
+                    { key: 'id_card', label: '身份证号' }, { key: 'gender', label: '性别' }, { key: 'birthday', label: '生日' },
+                    { key: 'company', label: '公司名称' }, { key: 'position', label: '职位' }, { key: 'province', label: '省市县' },
+                    { key: 'work_address', label: '工作地址' }, { key: 'confirm_code', label: '确认码' }, { key: 'sms_code', label: '短信二维码' },
+                    { key: 'qrcode', label: '二维码链接' }, { key: 'order', label: '参会订单' }, { key: 'remark', label: '备注字段' },
+                    { key: 'schedule', label: '会议安排' }
+                ]
+            },
+            hotel: {
+                label: '酒店信息',
+                fields: [
+                    { key: 'hotel_name', label: '酒店名称' }, { key: 'room_no', label: '房间号' }
+                ]
+            },
+            link: {
+                label: '活动相关链接',
+                fields: [
+                    { key: 'activity_link', label: '活动链接' }
+                ]
+            },
+            activity: {
+                label: '活动信息',
+                fields: [
+                    { key: 'activity_name', label: '活动名称' }, { key: 'activity_time', label: '活动时间' }
+                ]
+            }
+        };
+        var currentVariableGroup = { first: 'attendee' };
+        function switchVariableGroup(key, group) {
+            currentVariableGroup[key] = group;
+            ['attendee','hotel','link','activity'].forEach(function(g){
+                document.getElementById('tab-'+g).classList.toggle('active', g===group);
+            });
+            renderVariableFieldBtns(key);
+        }
+        function renderVariableFieldBtns(key) {
+            var group = currentVariableGroup[key] || 'attendee';
+            var btns = variableFieldGroups[group].fields.map(function(f){
+                var selected = selectedVariableField[key] === f.key;
+                return `<button type=\"button\" class=\"variable-field-btn${selected? ' selected':''}\" onclick=\"selectVariableField('${key}','${f.key}',this)\">${f.label}</button>`;
+            }).join('');
+            document.getElementById(key+'VariableBtns').innerHTML = btns;
+        }
+        function selectVariableField(key, field, btn) {
+            selectedVariableField[key] = field;
+            renderVariableFieldBtns(key);
+            updatePreview();
+        }
+        function initVariablePanels() {
+            renderVariableFieldBtns('first');
+        }
+        document.addEventListener('DOMContentLoaded', function(){
+            initVariablePanels();
+            // 自动触发所有变量字段的类型切换，保证初始显示正确
+            ['first','keyword1','keyword2','keyword3','remark'].forEach(function(key){
+                var select = document.getElementById(key+'MappingType');
+                if (select) onMappingTypeChange(select, key);
+            });
+        });
+        // 预览内容联动
+        function updatePreview() {
+            // first
+            var firstType = document.getElementById('firstMappingType').value;
+            if(firstType === 'fixed') {
+                document.getElementById('previewFirst').innerText = document.getElementById('firstFixedInput').value || '您好，您已成功签到！';
+            } else {
+                var field = selectedVariableField['first'] || 'user_name';
+                document.getElementById('previewFirst').innerText = getVariableFieldLabel(field);
+            }
+            // keyword1
+            var keyword1Type = document.getElementById('keyword1MappingType').value;
+            document.getElementById('previewKeyword1').innerText =
+                keyword1Type === 'fixed' ?
+                    document.getElementById('keyword1FixedInput').value || '2023年度技术研讨会'
+                    : document.getElementById('keyword1VariableSelectedLabel').innerText;
+            // keyword2
+            var keyword2Type = document.getElementById('keyword2MappingType').value;
+            document.getElementById('previewKeyword2').innerText =
+                keyword2Type === 'fixed' ?
+                    document.getElementById('keyword2FixedInput').value || '2023-11-20 09:30:45'
+                    : document.getElementById('keyword2VariableSelectedLabel').innerText;
+            // keyword3
+            var keyword3Type = document.getElementById('keyword3MappingType').value;
+            document.getElementById('previewKeyword3').innerText =
+                keyword3Type === 'fixed' ?
+                    document.getElementById('keyword3FixedInput').value || '科技园B栋3楼多功能厅'
+                    : document.getElementById('keyword3VariableSelectedLabel').innerText;
+            // remark
+            var remarkType = document.getElementById('remarkMappingType').value;
+            document.getElementById('previewRemark').innerText =
+                remarkType === 'fixed' ?
+                    document.getElementById('remarkFixedInput').value || '感谢您参加本次会议，祝您会议愉快！'
+                    : document.getElementById('remarkVariableSelectedLabel').innerText;
+            // 跳转链接
+            var url = document.getElementById('jumpUrl') ? document.getElementById('jumpUrl').value : '';
+            var footer = document.getElementById('previewFooter');
+            if (footer && url) {
+                footer.innerHTML = '<a href="' + url + '" target="_blank" style="color:#07C160;text-decoration:none;">详情 &gt;</a>';
+            } else if (footer) {
+                footer.innerHTML = '详情 &gt;';
+            }
+        }
+        function getVariableFieldLabel(field) {
+            var map = {
+                user_name: '姓名', email: '邮箱', mobile: '手机号', company: '公司名称', position: '职位',
+                hotel_name: '酒店名称', room_no: '房间号', activity_link: '活动链接', activity_name: '活动名称', activity_time: '活动时间'
+            };
+            return map[field] || field;
+        }
+        function setTriggerTypeCard(type) {
+            if(type === 'event') {
+                document.getElementById('cardRadioEvent').classList.add('selected');
+                document.getElementById('cardRadioTimer').classList.remove('selected');
+                document.querySelector('input[name="triggerType"][value="event"]').checked = true;
+                document.querySelector('input[name="triggerType"][value="timer"]').checked = false;
+                document.getElementById('eventTriggerArea').style.display = '';
+                document.getElementById('timerTriggerArea').style.display = 'none';
+            } else {
+                document.getElementById('cardRadioEvent').classList.remove('selected');
+                document.getElementById('cardRadioTimer').classList.add('selected');
+                document.querySelector('input[name="triggerType"][value="event"]').checked = false;
+                document.querySelector('input[name="triggerType"][value="timer"]').checked = true;
+                document.getElementById('eventTriggerArea').style.display = 'none';
+                document.getElementById('timerTriggerArea').style.display = '';
+            }
+        }
+        function showScanModal() {
+            document.getElementById('scanModal').style.display = 'flex';
+        }
+        function hideScanModal() {
+            document.getElementById('scanModal').style.display = 'none';
+        }
+        // 弹窗相关逻辑（支持所有变量）
+        let currentVariableModalGroup = 'attendee';
+        let currentVariableModalKey = '';
+        function showVariableModal(key) {
+            currentVariableModalKey = key;
+            switchVariableModalGroup('attendee');
+            document.getElementById('variableModalMask').style.display = 'flex';
+        }
+        function hideVariableModal() {
+            document.getElementById('variableModalMask').style.display = 'none';
+        }
+        function switchVariableModalGroup(group) {
+            currentVariableModalGroup = group;
+            ['attendee','hotel','link','activity'].forEach(function(g){
+                document.getElementById('modal-tab-'+g).classList.toggle('active', g===group);
+            });
+            renderVariableModalBtns();
+        }
+        function renderVariableModalBtns() {
+            var group = currentVariableModalGroup;
+            var key = currentVariableModalKey;
+            var btns = variableFieldGroups[group].fields.map(function(f){
+                var selected = selectedVariableField[key] === f.key;
+                return `<button type=\"button\" class=\"variable-modal-btn${selected? ' selected':''}\" onclick=\"selectVariableModalField('${key}','${f.key}')\">${f.label}</button>`;
+            }).join('');
+            document.getElementById('variableModalBtns').innerHTML = btns;
+        }
+        function selectVariableModalField(key, field) {
+            selectedVariableField[key] = field;
+            updateVariableSelectedLabel(key);
+            hideVariableModal();
+            updatePreview();
+        }
+        function updateVariableSelectedLabel(key) {
+            var field = selectedVariableField[key];
+            var label = '';
+            Object.values(variableFieldGroups).forEach(function(group){
+                group.fields.forEach(function(f){ if(f.key===field) label=f.label; });
+            });
+            document.getElementById(key+'VariableSelectedLabel').innerText = label ? ('已选择：' + label) : '未选择';
+        }
+        // 初始化所有变量字段选择label
+        function initVariablePanels() {
+            ['first','keyword1','keyword2','keyword3','remark'].forEach(updateVariableSelectedLabel);
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公众号授权 - 会议管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .back-button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .back-button i {
+            margin-right: 5px;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        .step.active:not(:last-child):after {
+            background-color: #07C160;
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .step.active .step-number {
+            background-color: #07C160;
+        }
+        .step.completed .step-number {
+            background-color: #07C160;
+        }
+        .step-title {
+            font-size: 14px;
+            color: #666;
+        }
+        .step.active .step-title {
+            color: #07C160;
+            font-weight: bold;
+        }
+        .auth-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        .auth-info {
+            flex: 1;
+            padding-right: 50px;
+        }
+        .auth-info h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .auth-info p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .auth-notice {
+            background-color: #f0f9eb;
+            border-left: 4px solid #07C160;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .auth-notice h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .auth-notice p {
+            margin-bottom: 10px;
+        }
+        .auth-notice p:last-child {
+            margin-bottom: 0;
+        }
+        .auth-qrcode {
+            width: 300px;
+            background-color: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+        }
+        .qrcode-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .qrcode-img {
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        .auth-status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .permission-list {
+            margin-top: 30px;
+        }
+        .permission-list h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .permission-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        .permission-item:last-child {
+            border-bottom: none;
+        }
+        .permission-icon {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            background-color: #e1f3d8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #07C160;
+        }
+        .permission-content {
+            flex: 1;
+        }
+        .permission-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .permission-desc {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+        <div class="container">        <header class="header">            <button class="back-button" onclick="window.location.href='微信集成入口页.html'">                <i>←</i> 返回微信集成管理            </button>            <h1>公众号授权</h1>        </header>
+
+        <div class="steps">
+            <div class="step active">
+                <div class="step-number">1</div>
+                <div class="step-title">扫码授权</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-title">确认授权</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-title">授权完成</div>
+            </div>
+        </div>
+
+        <div class="auth-content">
+            <div class="auth-info">
+                <h2>微信公众号授权流程</h2>
+                <p>为了让我们的系统能够代表您的公众号发送模板消息，您需要授权您的微信公众号给我们的平台。授权后，我们将获得必要的权限，用于向您的用户发送会议签到和酒店入住相关的通知。</p>
+                
+                <div class="auth-notice">
+                    <h3>授权须知</h3>
+                    <p>1. 请确保您是公众号管理员，并有权限进行授权操作。</p>
+                    <p>2. 授权后，我们仅获得您选择授权的权限，不会操作与授权无关的功能。</p>
+                    <p>3. 您可以随时在公众号后台或本系统中取消授权。</p>
+                </div>
+
+                <div class="permission-list">
+                    <h3>我们需要获取的权限</h3>
+                    <div class="permission-item">
+                        <div class="permission-icon">✓</div>
+                        <div class="permission-content">
+                            <div class="permission-title">模板消息</div>
+                            <div class="permission-desc">用于向用户发送会议签到和酒店入住通知</div>
+                        </div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-icon">✓</div>
+                        <div class="permission-content">
+                            <div class="permission-title">用户基础信息</div>
+                            <div class="permission-desc">获取用户OpenID用于精准推送消息</div>
+                        </div>
+                    </div>
+                    <div class="permission-item">
+                        <div class="permission-icon">✓</div>
+                        <div class="permission-content">
+                            <div class="permission-title">客服消息</div>
+                            <div class="permission-desc">用于回复用户消息和提供客服支持</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-qrcode">
+                <div class="qrcode-box">
+                    <div class="qrcode-img">扫码授权二维码</div>
+                </div>
+                <p>请使用公众号管理员微信扫描二维码进行授权</p>
+                <div class="auth-status">
+                    等待扫码...
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
