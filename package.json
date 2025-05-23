@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "微信模板消息管理系统",
   "scripts": {
-    "dev": "serve .",
-    "build": "cp *.html ./"
+    "dev": "serve ."
   },
   "dependencies": {
     "serve": "^14.2.1"
